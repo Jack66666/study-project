@@ -87,43 +87,43 @@ public class DynamicProgramming {
         }
         int maxValue = -1;
         for (int i = bpWeight; i >=0; i--) {
-            if (status[n - 1][i] > -1) {
+            // 此处不能进行break，goods = [9, 5, 5], values = [100, 1, 1], weight = 10会有问题
+            if (status[n - 1][i] > maxValue ) {
                 maxValue = status[n - 1][i];
-                break;
             }
         }
         return maxValue;
     }
 
-//    public int backpackValue1(int[] goods, int[] values, int bpWeight) {
-//        int n = goods.length;
-//        int[] status = new int[bpWeight + 1];
-//        for (int i = 0; i < status.length; i++) {
-//            status[i] = -1;
-//        }
-//        status[0] = 0;
-//        if (goods[0] <= bpWeight) {
-//            status[goods[0]] = values[0];
-//        }
-//        for (int g = 1; g < n; g++) {
-//            for (int j = 0; j <= bpWeight - goods[g]; j++) {
-//                if (status[g - 1][j] > -1) {
-//                    int val = status[g - 1][j] + values[g];
-//                    if (val > status[g][j + goods[g]]) {
-//                        status[g][j + goods[g]] = val;
-//                    }
-//                }
-//            }
-//        }
-//        int maxValue = -1;
-//        for (int i = bpWeight; i >=0; i--) {
-//            if (status[n - 1][i] > -1) {
-//                maxValue = status[n - 1][i];
-//                break;
-//            }
-//        }
-//        return maxValue;
-//    }
+    public int backpackValue1(int[] goods, int[] values, int bpWeight) {
+        int n = goods.length;
+        int[] status = new int[bpWeight + 1];
+        for (int i = 0; i < status.length; i++) {
+            status[i] = -1;
+        }
+        status[0] = 0;
+        if (goods[0] <= bpWeight) {
+            status[goods[0]] = values[0];
+        }
+        for (int g = 1; g < n; g++) {
+            for (int j = bpWeight - goods[g]; j >= 0; j--) {
+                if (status[j] > -1) {
+                    int val = status[j] + values[g];// values和goods位置一一对应，此值为要放置到status[j + goods[g]]处的val值
+                    if (val > status[j + goods[g]]) {
+                        status[j + goods[g]] = val;
+                    }
+                }
+            }
+        }
+        int maxValue = -1;
+        for (int i = bpWeight; i >=0; i--) {
+            // 此处不能进行break，goods = [9, 5, 5], values = [100, 1, 1], weight = 10会有问题
+            if (status[i] > maxValue) {
+                maxValue = status[i];
+            }
+        }
+        return maxValue;
+    }
 
     public static void main(String[] args) {
         DynamicProgramming dynamicProgramming = new DynamicProgramming();
@@ -138,9 +138,11 @@ public class DynamicProgramming {
         int maxValue;
         // 背包问题计算（引入物品价值概念）
         int[] goodsVal = new int[]{1, 2, 3};
-        int[] valuesVal = new int[]{1, 1, 4};
+        int[] valuesVal = new int[]{1, 1, 1};
         int bpWeightVal = 3;
         maxValue = dynamicProgramming.backpackValue(goodsVal, valuesVal, bpWeightVal);
         System.out.println("背包问题计算（引入物品价值概念）：" + maxValue);
+        maxValue = dynamicProgramming.backpackValue(goodsVal, valuesVal, bpWeightVal);
+        System.out.println("背包问题计算（引入物品价值概念）1：" + maxValue);
     }
 }
